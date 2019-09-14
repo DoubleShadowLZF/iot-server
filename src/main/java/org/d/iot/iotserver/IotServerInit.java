@@ -1,9 +1,9 @@
 package org.d.iot.iotserver;
 
-import org.d.iot.iotserver.config.IotServerProperties;
-import org.d.iot.iotserver.config.SslConfig;
-import org.d.iot.iotserver.socket.client.DoorLockClient;
-import org.d.iot.iotserver.socket.message.LedOnMsgBase;
+import org.d.iot.iotserver.lock.config.IotServerProperties;
+import org.d.iot.iotserver.lock.config.SslConfig;
+import org.d.iot.iotserver.lock.socket.client.DoorLockClient;
+import org.d.iot.iotserver.lock.socket.message.LedOnMsgBase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
