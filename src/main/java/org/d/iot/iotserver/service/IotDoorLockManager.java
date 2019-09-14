@@ -140,12 +140,11 @@ public class IotDoorLockManager {
     }
 
     /**
+     * 使用Callable+FutureTask获取执行结果
      * todo:是否在此添加同步锁以保证线程安全?
-     *
      * @param request
      * @return
      */
-    //使用Callable+FutureTask获取执行结果
     public static BaseLockMsg send(BaseLockMsg request) {
         ChannelHandlerContext ctx = null;
 
