@@ -9,6 +9,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import lombok.extern.slf4j.Slf4j;
 import org.d.iot.iotserver.config.IotServerProperties;
+import org.d.iot.iotserver.config.SslConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -32,7 +33,7 @@ public class IotService {
   /** 服务端实现部分 */
   private IotServerProperties properties;
 
-  public IotService(@Autowired IotServerProperties properties) {
+  public IotService(@Autowired IotServerProperties properties, @Autowired SslConfig sslConfig) {
     this.properties = properties;
 
     // (1)、 初始化用于Acceptor的主"线程池"以及用于I/O工作的从"线程池"；//实际不是线程池而是可复用线程
@@ -63,7 +64,7 @@ public class IotService {
                 .channel(NioServerSocketChannel.class)
                 .childHandler(
                     // (6)、 设置子通道也就是SocketChannel的处理器， 其内部是实际业务开发的"主战场"
-                    new SslServerChannelInitializer())
+                    new SslServerChannelInitializer(sslConfig))
                 // (7)、 配置ServerSocketChannel的选项
                 .option(ChannelOption.SO_BACKLOG, 128)
                 // (8)、 配置子通道也就是SocketChannel的选项

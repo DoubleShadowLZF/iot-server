@@ -5,6 +5,7 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.SslHandler;
+import org.d.iot.iotserver.config.SslConfig;
 import org.d.iot.iotserver.socket.server.IotChannelHandler;
 import org.d.iot.iotserver.socket.server.IotMsgDecoder;
 import org.d.iot.iotserver.socket.server.IotMsgEncoder;
@@ -30,6 +31,12 @@ import java.security.cert.CertificateException;
  */
 public class SslClientChannelInitializer extends ChannelInitializer<SocketChannel> {
 
+  private SslConfig sslConfig;
+
+  public SslClientChannelInitializer(SslConfig sslConfig) {
+    this.sslConfig = sslConfig;
+  }
+
   @Override
   protected void initChannel(SocketChannel channel) throws Exception {
     SslContext ctx = initSSLContext();
@@ -38,10 +45,12 @@ public class SslClientChannelInitializer extends ChannelInitializer<SocketChanne
     engine.setUseClientMode(true);
     channel
         .pipeline()
-        .addFirst("ssl", new SslHandler(engine))
         .addLast("decoder", new IotMsgDecoder())
         .addLast("encoder", new IotMsgEncoder())
         .addLast(new IotChannelHandler());
+    if (sslConfig.isUseSsl()) {
+      channel.pipeline().addFirst("ssl", new SslHandler(engine));
+    }
   }
 
   /**
@@ -56,7 +65,7 @@ public class SslClientChannelInitializer extends ChannelInitializer<SocketChanne
   private SslContext initSSLContext()
       throws NoSuchAlgorithmException, IOException, KeyStoreException, CertificateException {
     KeyStore keyStore = KeyStore.getInstance("JKS");
-    File file = ResourceUtils.getFile("classpath:ssl/client/cChat.jks");
+    File file = ResourceUtils.getFile(sslConfig.getClientFilePath());
     keyStore.load(new FileInputStream(file), "cNetty".toCharArray());
     TrustManagerFactory tf = TrustManagerFactory.getInstance("SunX509");
     tf.init(keyStore);

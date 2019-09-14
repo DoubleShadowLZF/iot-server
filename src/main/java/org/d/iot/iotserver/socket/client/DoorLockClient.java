@@ -8,9 +8,10 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import lombok.extern.slf4j.Slf4j;
 import org.d.iot.iotserver.config.IotServerProperties;
+import org.d.iot.iotserver.config.SslConfig;
 import org.d.iot.iotserver.socket.message.BaseLockMsg;
 import org.d.iot.iotserver.socket.message.LedOnMsgBase;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * ClassName: DoorLockClient <br>
@@ -21,15 +22,21 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @since JDK 1.8
  */
 @Slf4j
-// @Component
+@Component
 public class DoorLockClient {
 
   private byte[] msg = {0x55, (byte) 0xaa, 0x00, 0x07, 0x01, 0x00, 0x00, 0x01, 0x02, 0x01, 0x00};
 
   private Channel clientChannel;
+  IotServerProperties properties;
+  private SslConfig sslConfig;
 
-  public DoorLockClient(@Autowired IotServerProperties properties) {
-    Channel channel = null;
+  public DoorLockClient(IotServerProperties properties, SslConfig sslConfig) {
+    this.properties = properties;
+    this.sslConfig = sslConfig;
+  }
+
+  public void init() {
     EventLoopGroup group;
     Class<? extends Channel> channelClass = NioSocketChannel.class;
     group = new NioEventLoopGroup();
@@ -40,8 +47,9 @@ public class DoorLockClient {
     b.option(ChannelOption.SO_REUSEADDR, true);
     b.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000);
     try {
-      b.handler(new SslClientChannelInitializer());
+      b.handler(new SslClientChannelInitializer(sslConfig));
       this.clientChannel = b.connect("127.0.0.1", properties.getPort()).sync().channel();
+      log.info("DoorLockClient is initialized.");
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -54,12 +62,19 @@ public class DoorLockClient {
    */
   public void sendMessage(BaseLockMsg msg) {
     this.clientChannel.writeAndFlush(msg);
+    log.debug("<<<{}", msg);
+  }
+
+  public void close() throws InterruptedException {
+    // 优雅关闭服务器
+    this.clientChannel.closeFuture().sync();
   }
 
   public static void main(String[] args) {
     IotServerProperties properties = new IotServerProperties();
     properties.setPort(7000);
-    DoorLockClient doorLockClient = new DoorLockClient(properties);
+    SslConfig config = new SslConfig();
+    DoorLockClient doorLockClient = new DoorLockClient(properties, config);
     doorLockClient.sendMessage(new LedOnMsgBase());
   }
 }

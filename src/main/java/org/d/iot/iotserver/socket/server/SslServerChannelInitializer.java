@@ -5,6 +5,7 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.SslHandler;
+import org.d.iot.iotserver.config.SslConfig;
 import org.springframework.util.ResourceUtils;
 
 import javax.net.ssl.KeyManagerFactory;
@@ -28,6 +29,12 @@ import java.security.cert.CertificateException;
  */
 public class SslServerChannelInitializer extends ChannelInitializer<SocketChannel> {
 
+  private SslConfig sslConfig;
+
+  public SslServerChannelInitializer(SslConfig sslConfig) {
+    this.sslConfig = sslConfig;
+  }
+
   @Override
   protected void initChannel(SocketChannel channel) throws Exception {
     SslContext ctx = initSSLContext();
@@ -36,10 +43,12 @@ public class SslServerChannelInitializer extends ChannelInitializer<SocketChanne
     engine.setUseClientMode(false);
     channel
         .pipeline()
-        .addFirst("ssl", new SslHandler(engine))
         .addLast("decoder", new IotMsgDecoder())
         .addLast("encoder", new IotMsgEncoder())
         .addLast(new IotChannelHandler());
+    if (sslConfig.isUseSsl()) {
+      channel.pipeline().addFirst("ssl", new SslHandler(engine));
+    }
   }
 
   /**
@@ -55,7 +64,7 @@ public class SslServerChannelInitializer extends ChannelInitializer<SocketChanne
       throws NoSuchAlgorithmException, IOException, KeyStoreException, CertificateException,
           UnrecoverableKeyException {
     KeyStore jks = KeyStore.getInstance("JKS");
-    File file = ResourceUtils.getFile("classpath:ssl/server/sChat.jks");
+    File file = ResourceUtils.getFile(sslConfig.getServerFilePath());
     jks.load(new FileInputStream(file), "sNetty".toCharArray());
     KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance("SunX509");
     keyManagerFactory.init(jks, "sNetty".toCharArray());

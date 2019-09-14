@@ -6,6 +6,10 @@ iot:
   server:
     port: 7000
     heart-beat-timeout: 3600000
+  ssl:
+    is-use-ssl: true
+    server-file-path: classpath:ssl/server/sChat.jks
+    client-file-path: classpath:ssl/client/cChat.jks
 
 logging:
   pattern:
@@ -15,3 +19,5 @@ logging:
     org:
       d: debug
   file: iot-server.log
+
+
