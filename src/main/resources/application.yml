@@ -1,0 +1,17 @@
+server:
+  context-path: /nb
+  port: 8000
+
+iot:
+  server:
+    port: 7000
+    heart-beat-timeout: 3600000
+
+logging:
+  pattern:
+    console: "%clr(%d{HH:mm:ss.SSS} [%t] %-5level) - %msg%n"
+    file: "%d{HH:mm:ss.SSS} [%t] %-5level - %msg%n"
+  level:
+    org:
+      d: debug
+  file: iot-server.log
