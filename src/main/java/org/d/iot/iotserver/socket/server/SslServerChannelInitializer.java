@@ -5,11 +5,13 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.SslHandler;
+import io.netty.handler.ssl.util.SelfSignedCertificate;
 import org.d.iot.iotserver.config.SslConfig;
 import org.springframework.util.ResourceUtils;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLEngine;
+import javax.net.ssl.SSLException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -37,7 +39,7 @@ public class SslServerChannelInitializer extends ChannelInitializer<SocketChanne
 
   @Override
   protected void initChannel(SocketChannel channel) throws Exception {
-    SslContext ctx = initSSLContext();
+    SslContext ctx = initSSLContext1();
     SSLEngine engine = ctx.newEngine(channel.alloc());
     // 注意：此处服务端应该设置为false
     engine.setUseClientMode(false);
@@ -52,7 +54,7 @@ public class SslServerChannelInitializer extends ChannelInitializer<SocketChanne
   }
 
   /**
-   * 初始化SSL上下文
+   * 使用自己生成的证书，初始化SSL上下文
    *
    * @return SSL上下文
    * @throws NoSuchAlgorithmException
@@ -69,5 +71,17 @@ public class SslServerChannelInitializer extends ChannelInitializer<SocketChanne
     KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance("SunX509");
     keyManagerFactory.init(jks, "sNetty".toCharArray());
     return SslContextBuilder.forServer(keyManagerFactory).build();
+  }
+
+  /**
+   * 使用netty内部的证书，初始化SSL上下文
+   *
+   * @return
+   * @throws CertificateException
+   * @throws SSLException
+   */
+  private SslContext initSSLContext1() throws CertificateException, SSLException {
+    SelfSignedCertificate ssc = new SelfSignedCertificate();
+    return SslContext.newServerContext(ssc.certificate(), ssc.privateKey());
   }
 }
