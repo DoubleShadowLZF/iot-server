@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.d.iot.iotserver.utils.decode.Hex;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEvent;
-import org.d.iot.iotserver.tcp.message.*;
+import org.d.iot.iotserver.socket.message.*;
 
 import java.util.Map;
 import java.util.concurrent.*;
@@ -33,7 +33,7 @@ public class IotDoorLockManager {
      */
 
     private static Map<Integer, ChannelHandlerContext> contextMap = new ConcurrentHashMap<>();
-    private static Map<ChannelHandlerContext, DeviceChannelInfo> deviceMap = new ConcurrentHashMap<>();//支持并发的map
+    private static Map<ChannelHandlerContext, DeviceChannelInfo> deviceMap = new ConcurrentHashMap<>();
 
     private static ApplicationContext appCtx = null;
     private static IotServerProperties serverProperties = null;
@@ -46,7 +46,7 @@ public class IotDoorLockManager {
     private static BlockingQueue<Runnable> workQueue = new ArrayBlockingQueue<>(5);
 
     private static Map<Integer, BaseLockMsg> resultMap = new ConcurrentHashMap<>();
-    private static Map<Integer, Object> locks = new ConcurrentHashMap<>();//支持并发的map
+    private static Map<Integer, Object> locks = new ConcurrentHashMap<>();
 
     public static void init(ApplicationContext ctx, IotServerProperties properties) {
         appCtx = ctx;
@@ -98,7 +98,7 @@ public class IotDoorLockManager {
 
             IotDoorLockManager.deviceRegistered(loginMsg.getDeviceId(), ctx);
         } else if (msg instanceof HeartBeatMsgBase) {
-            // 心跳信息，啥也不干
+            // 心跳信息
         } else if (msg instanceof BaseLockTestMsg) {
             // 测试信息
             log.info("test message read from device {}", msg.getDeviceId());

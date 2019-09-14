@@ -1,6 +1,6 @@
-package org.d.iot.iotserver.tcp;
+package org.d.iot.iotserver.socket;
 
-import org.d.iot.iotserver.tcp.message.BaseLockMsg;
+import org.d.iot.iotserver.socket.message.BaseLockMsg;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;

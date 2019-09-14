@@ -1,7 +1,7 @@
-package org.d.iot.iotserver.tcp;
+package org.d.iot.iotserver.socket;
 
 import org.d.iot.iotserver.service.IotDoorLockManager;
-import org.d.iot.iotserver.tcp.message.BaseLockMsg;
+import org.d.iot.iotserver.socket.message.BaseLockMsg;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import lombok.extern.slf4j.Slf4j;

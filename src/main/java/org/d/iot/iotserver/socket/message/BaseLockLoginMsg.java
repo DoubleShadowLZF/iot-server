@@ -1,4 +1,4 @@
-package org.d.iot.iotserver.tcp.message;
+package org.d.iot.iotserver.socket.message;
 
 /**
  * ClassName: BaseLockLoginMsg <br/>

@@ -5,7 +5,7 @@ import org.d.iot.iotserver.service.IotDoorLockManager;
 import org.d.iot.iotserver.service.IotDoorLockService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.d.iot.iotserver.tcp.message.*;
+import org.d.iot.iotserver.socket.message.*;
 
 /**
  * ClassName: IotDoorLockServiceImpl <br/>

@@ -1,11 +1,11 @@
-package org.d.iot.iotserver.tcp;
+package org.d.iot.iotserver.socket;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
 import lombok.extern.slf4j.Slf4j;
-import org.d.iot.iotserver.tcp.message.BaseLockMsg;
-import org.d.iot.iotserver.tcp.message.LockMsgBuilder;
+import org.d.iot.iotserver.socket.message.BaseLockMsg;
+import org.d.iot.iotserver.socket.message.LockMsgBuilder;
 import org.d.iot.iotserver.utils.decode.Bytes;
 
 import java.util.List;

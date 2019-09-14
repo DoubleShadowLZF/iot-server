@@ -1,4 +1,4 @@
-package org.d.iot.iotserver.tcp;
+package org.d.iot.iotserver.socket;
 
 import org.d.iot.iotserver.service.IotDoorLockManager;
 import org.springframework.scheduling.annotation.Scheduled;

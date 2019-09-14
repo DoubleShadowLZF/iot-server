@@ -1,19 +1,27 @@
-package org.d.iot.iotserver.tcp;
+package org.d.iot.iotserver.socket;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import io.netty.handler.ssl.SslContext;
+import io.netty.handler.ssl.SslContextBuilder;
 import org.d.iot.iotserver.config.IotServerProperties;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import lombok.extern.slf4j.Slf4j;
+import org.d.iot.iotserver.config.init.SslChannelInitializer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.net.ssl.KeyManagerFactory;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -55,16 +63,10 @@ public class IotService {
                 server.group(bossGroup, workerGroup)
                         //(4)、 指定通道channel的类型，由于是服务端，故而是NioServerSocketChannel；
                         .channel(NioServerSocketChannel.class)
-                        .childHandler(new ChannelInitializer<SocketChannel>() {
-                            @Override
-                            public void initChannel(SocketChannel ch) throws Exception {
+                        .childHandler(
                                 //(6)、 设置子通道也就是SocketChannel的处理器， 其内部是实际业务开发的"主战场"
-                                ch.pipeline()
-                                        .addLast("decoder", new IotMsgDecoder())
-                                        .addLast("encoder", new IotMsgEncoder())
-                                        .addLast(new IotChannelHandler());
-                            }
-                        })
+                                new SslChannelInitializer(initSSLContext())
+                        )
                         // (7)、 配置ServerSocketChannel的选项
                         .option(ChannelOption.SO_BACKLOG, 128)
                         //(8)、 配置子通道也就是SocketChannel的选项
@@ -85,6 +87,21 @@ public class IotService {
                 log.error("Error starting server ", ex);
             }
         });
+    }
+
+    /**
+     * 初始化SSL上下文
+     * @return SSL上下文
+     * @throws NoSuchAlgorithmException
+     * @throws IOException
+     * @throws KeyStoreException
+     * @throws CertificateException
+     */
+    private SslContext initSSLContext() throws NoSuchAlgorithmException, IOException, KeyStoreException, CertificateException {
+        KeyStore jks = KeyStore.getInstance("JKS");
+        jks.load(new FileInputStream("classpath:ssl/sChat.jks"),"sNetty".toCharArray());
+        KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance("iot-server-ssl");
+        return SslContextBuilder.forServer(keyManagerFactory).build();
     }
 
 }

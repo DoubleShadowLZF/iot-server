@@ -3,7 +3,7 @@
  * 作者：caisj
  * 版权：广州市森锐科技股份有限公司
  */
-package org.d.iot.iotserver.tcp.message;
+package org.d.iot.iotserver.socket.message;
 
 /**
  * ClassName: BaseLockStatusMsg <br/>
