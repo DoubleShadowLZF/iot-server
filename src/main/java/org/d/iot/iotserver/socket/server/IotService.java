@@ -1,4 +1,4 @@
-package org.d.iot.iotserver.socket;
+package org.d.iot.iotserver.socket.server;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import io.netty.handler.ssl.SslContext;

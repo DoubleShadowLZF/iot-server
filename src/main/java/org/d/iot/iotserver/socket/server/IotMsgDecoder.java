@@ -1,4 +1,4 @@
-package org.d.iot.iotserver.socket;
+package org.d.iot.iotserver.socket.server;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;

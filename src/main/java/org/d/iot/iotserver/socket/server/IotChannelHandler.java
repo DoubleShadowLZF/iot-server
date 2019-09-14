@@ -1,4 +1,4 @@
-package org.d.iot.iotserver.socket;
+package org.d.iot.iotserver.socket.server;
 
 import org.d.iot.iotserver.service.IotDoorLockManager;
 import org.d.iot.iotserver.socket.message.BaseLockMsg;

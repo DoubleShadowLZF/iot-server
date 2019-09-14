@@ -4,9 +4,9 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslHandler;
-import org.d.iot.iotserver.socket.IotChannelHandler;
-import org.d.iot.iotserver.socket.IotMsgDecoder;
-import org.d.iot.iotserver.socket.IotMsgEncoder;
+import org.d.iot.iotserver.socket.server.IotChannelHandler;
+import org.d.iot.iotserver.socket.server.IotMsgDecoder;
+import org.d.iot.iotserver.socket.server.IotMsgEncoder;
 
 import javax.net.ssl.SSLEngine;
 
